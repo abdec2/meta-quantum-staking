@@ -1,0 +1,17 @@
+{
+  "name": "meta-quantum-staking",
+  "version": "1.0.0",
+  "description": "meta quantum staking contract",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Azim Baig",
+  "license": "ISC",
+  "devDependencies": {
+    "hardhat": "^2.9.3"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.6.0"
+  }
+}
