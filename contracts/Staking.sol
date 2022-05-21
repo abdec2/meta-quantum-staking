@@ -9,9 +9,11 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 contract Staking is Ownable {
     using SafeMath for uint256;
 
-    uint8 sixMonthAPR = 40;
-    uint8 oneYearAPR = 80;
-    uint8 threeYearAPR = 180;
+    uint8 sixMonthAPR = 30;
+    uint8 oneYearAPR = 60;
+    uint8 threeYearAPR = 150;
+    uint256 public totalStake;
+    uint256 public totalRewards;
 
     struct stake {
         uint256 amount;
@@ -38,10 +40,12 @@ contract Staking is Ownable {
         if(stakes[msg.sender].amount == 0) {
             addStakeholder(msg.sender);
             stakes[msg.sender] = stake(_stake, block.timestamp);
+            totalStake = totalStake.add(_stake);
         } else {
             stake memory tempStake = stakes[msg.sender];
             tempStake.amount = tempStake.amount.add(_stake);
             stakes[msg.sender] = tempStake;
+            totalStake = totalStake.add(_stake);
         }
     }
 
@@ -51,6 +55,7 @@ contract Staking is Ownable {
         stake memory tempStake = stakes[msg.sender];
         tempStake.amount = tempStake.amount.sub(_stake);
         stakes[msg.sender] = tempStake;
+        totalStake = totalStake.sub(_stake);
         if(stakes[msg.sender].amount == 0) removeStakeholder(msg.sender);
         myToken.transfer(msg.sender, _stake);
     }
@@ -106,16 +111,12 @@ contract Staking is Ownable {
     }
 
     
-    function totalRewards()
+    function getTotalRewards()
         public
         view
         returns(uint256)
     {
-        uint256 _totalRewards = 0;
-        for (uint256 s = 0; s < stakeholders.length; s += 1){
-            _totalRewards = _totalRewards.add(rewards[stakeholders[s]]);
-        }
-        return _totalRewards;
+        return totalRewards;
     }
 
     function calculateReward(address _stakeholder)
@@ -146,6 +147,7 @@ contract Staking is Ownable {
             address stakeholder = stakeholders[s];
             uint256 reward = calculateReward(stakeholder);
             rewards[stakeholder] = rewards[stakeholder].add(reward);
+            totalRewards = totalRewards.add(reward);
         }
     }
 
