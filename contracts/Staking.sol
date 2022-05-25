@@ -9,9 +9,9 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 contract Staking is Ownable {
     using SafeMath for uint256;
 
-    uint8 sixMonthAPR = 30;
-    uint8 oneYearAPR = 60;
-    uint8 threeYearAPR = 150;
+    uint8 private sixMonthAPR = 30;
+    uint8 private oneYearAPR = 60;
+    uint8 private threeYearAPR = 150;
     uint256 public totalStake;
     uint256 public totalRewards;
 
@@ -159,4 +159,31 @@ contract Staking is Ownable {
         rewards[msg.sender] = 0;
         myToken.transferFrom(owner(), msg.sender, reward);
     }
+
+    // ---- Staking APY Getter and setters ---- 
+
+    function getSixMonthAPR() public view returns (uint8) {
+        return sixMonthAPR;
+    }
+
+    function getOneYearAPR() public view returns (uint8) {
+        return oneYearAPR;
+    }
+
+    function getThreeYearAPR() public view returns (uint8) {
+        return threeYearAPR;
+    }
+
+    function setSixMonthAPR(uint8 _sixMonthAPR) public onlyOwner {
+        sixMonthAPR = _sixMonthAPR;
+    }
+
+    function setOneYearAPR(uint8 _oneYearAPR) public onlyOwner {
+        oneYearAPR = _oneYearAPR;
+    }
+
+    function setThreeYearAPR(uint8 _threeYearAPR) public onlyOwner {
+        threeYearAPR = _threeYearAPR;
+    }
+
 }
