@@ -449,7 +449,7 @@ contract Staking is Ownable {
     address[] internal stakeholders;
 
     // mapping(address => stake) internal stakes;
-    mapping(address => mapping(StakingPeriod => stake)) internal stakes;
+    mapping(address => mapping(StakingPeriod => stake)) public stakes;
 
     IERC20 public myToken;
 
@@ -480,10 +480,10 @@ contract Staking is Ownable {
         stake memory tempStake = stakes[msg.sender][_stakePeriod];
         require(validateStakingPeriod(tempStake), "Staking period is not expired");
         require(_stake <= tempStake.amount, "Invalid Stake Amount");
+        uint256 _investorReward = getDailyRewards(_stakePeriod);
         tempStake.amount = tempStake.amount.sub(_stake);
         stakes[msg.sender][_stakePeriod] = tempStake;
         totalStake = totalStake.sub(_stake);
-        uint256 _investorReward = getInvestorRewards(_stake, tempStake);
         totalRewards = totalRewards.add(_investorReward);
         //uint256 tokensToBeTransfer = _stake.add(_investorReward);
         if(stakes[msg.sender][_stakePeriod].amount == 0) removeStakeholder(msg.sender);
@@ -524,8 +524,8 @@ contract Staking is Ownable {
         uint256 total_rewards = getInvestorRewards(tempStake.amount, tempStake);
         uint256 noOfDays = (block.timestamp - tempStake.timestamp).div(60).div(60).div(24);
         noOfDays = (noOfDays < 1) ? 1 : noOfDays;
-        uint256 stakingPeriodInDays =  getStakingPeriodInNumbers(tempStake).div(60).div(60).div(24);
-        return total_rewards.div(stakingPeriodInDays).mul(noOfDays);
+       // uint256 stakingPeriodInDays =  getStakingPeriodInNumbers(tempStake).div(60).div(60).div(24);
+        return total_rewards.div(364).mul(noOfDays);
     }
 
     // ---------- STAKEHOLDERS ----------
